@@ -1,5 +1,8 @@
 package com.example.xiaoyu_angelica_comp304sec001_lab04.repository
 
+import android.content.Context
+import com.example.xiaoyu_angelica_comp304sec001_lab04.R
+
 data class Place(
     val id: String,
     val name: String,
@@ -10,32 +13,98 @@ data class Place(
 
 object PlacesRepository {
 
-    private val categories = listOf("Landmarks", "Museums", "Cafes")
-
-    private val places = mapOf(
-        "Landmarks" to listOf(
-            Place("osaka_castle", "Osaka Castle", "1-1 Osakajo, Chuo Ward, Osaka", 34.6873, 135.5259),
-            Place("dotonbori", "Dotonbori", "Chuo Ward, Osaka", 34.6687, 135.5012),
-            Place("tsutenkaku", "Tsutenkaku Tower", "1-18-6 Ebisuhigashi, Naniwa Ward, Osaka", 34.6525, 135.5063)
-        ),
-        "Museums" to listOf(
-            Place("osaka_museum_history", "Osaka Museum of History", "4-1-32 Otemae, Chuo Ward, Osaka", 34.6829, 135.5206),
-            Place("national_museum_art", "National Museum of Art, Osaka", "4-2-55 Nakanoshima, Kita Ward, Osaka", 34.6915, 135.4972),
-            Place("science_museum", "Osaka Science Museum", "4-2-1 Nakanoshima, Kita Ward, Osaka", 34.6911, 135.4979)
-        ),
-        "Cafes" to listOf(
-            Place("rikuro", "Rikuro’s Cheesecake Cafe", "3-2-12 Namba, Chuo Ward, Osaka", 34.6644, 135.5019),
-            Place("lilo", "LiLo Coffee Roasters", "1-10-28 Nishishinsaibashi, Chuo Ward, Osaka", 34.6712, 135.4999),
-            Place("arabica", "Arabica Osaka", "1-6-5 Minamihorie, Nishi Ward, Osaka", 34.6689, 135.4938)
-        )
+    fun getCategories(context: Context): List<String> = listOf(
+        context.getString(R.string.category_landmarks),
+        context.getString(R.string.category_museums),
+        context.getString(R.string.category_cafes)
     )
 
-    // Public API used by ViewModels and Activities
-    fun getCategories(): List<String> = categories
+    fun getPlaces(context: Context, categoryName: String): List<Place> {
 
-    fun getPlaces(categoryId: String): List<Place> =
-        places[categoryId] ?: emptyList()
+        val landmarks = listOf(
+            Place(
+                "osaka_castle",
+                context.getString(R.string.place_osaka_castle),
+                context.getString(R.string.addr_osaka_castle),
+                34.6873,
+                135.5259
+            ),
+            Place(
+                "dotonbori",
+                context.getString(R.string.place_dotonbori),
+                context.getString(R.string.addr_dotonbori),
+                34.6687,
+                135.5012
+            ),
+            Place(
+                "tsutenkaku",
+                context.getString(R.string.place_tsutenkaku),
+                context.getString(R.string.addr_tsutenkaku),
+                34.6525,
+                135.5063
+            )
+        )
 
-    fun getPlaceById(placeId: String): Place? =
-        places.values.flatten().find { it.id == placeId }
+        val museums = listOf(
+            Place(
+                "osaka_museum_history",
+                context.getString(R.string.place_osaka_museum_history),
+                context.getString(R.string.addr_osaka_museum_history),
+                34.6829,
+                135.5206
+            ),
+            Place(
+                "national_museum_art",
+                context.getString(R.string.place_national_museum_art),
+                context.getString(R.string.addr_national_museum_art),
+                34.6915,
+                135.4972
+            ),
+            Place(
+                "science_museum",
+                context.getString(R.string.place_science_museum),
+                context.getString(R.string.addr_science_museum),
+                34.6911,
+                135.4979
+            )
+        )
+
+        val cafes = listOf(
+            Place(
+                "rikuro",
+                context.getString(R.string.place_rikuro),
+                context.getString(R.string.addr_rikuro),
+                34.6644,
+                135.5019
+            ),
+            Place(
+                "lilo",
+                context.getString(R.string.place_lilo),
+                context.getString(R.string.addr_lilo),
+                34.6712,
+                135.4999
+            ),
+            Place(
+                "arabica",
+                context.getString(R.string.place_arabica),
+                context.getString(R.string.addr_arabica),
+                34.6689,
+                135.4938
+            )
+        )
+
+        return when (categoryName) {
+            context.getString(R.string.category_landmarks) -> landmarks
+            context.getString(R.string.category_museums) -> museums
+            context.getString(R.string.category_cafes) -> cafes
+            else -> emptyList()
+        }
+    }
+
+    fun getPlaceById(context: Context, placeId: String): Place? {
+        val all = getCategories(context)
+            .flatMap { getPlaces(context, it) }
+
+        return all.find { it.id == placeId }
+    }
 }

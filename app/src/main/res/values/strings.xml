@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">Xiaoyu_Angelica_COMP304Sec001_Lab04</string>
+
+    <string name="category_landmarks">Landmarks</string>
+    <string name="category_museums">Museums</string>
+    <string name="category_cafes">Cafes</string>
+
+    <string name="place_osaka_castle">Osaka Castle</string>
+    <string name="place_dotonbori">Dotonbori</string>
+    <string name="place_tsutenkaku">Tsutenkaku Tower</string>
+
+    <string name="place_osaka_museum_history">Osaka Museum of History</string>
+    <string name="place_national_museum_art">National Museum of Art, Osaka</string>
+    <string name="place_science_museum">Osaka Science Museum</string>
+
+    <string name="place_rikuro">Rikuro’s Cheesecake Cafe</string>
+    <string name="place_lilo">LiLo Coffee Roasters</string>
+    <string name="place_arabica">Arabica Osaka</string>
+
+    <string name="addr_osaka_castle">1-1 Osakajo, Chuo Ward, Osaka</string>
+    <string name="addr_dotonbori">Chuo Ward, Osaka</string>
+    <string name="addr_tsutenkaku">1-18-6 Ebisuhigashi, Naniwa Ward, Osaka</string>
+
+    <string name="addr_osaka_museum_history">4-1-32 Otemae, Chuo Ward, Osaka</string>
+    <string name="addr_national_museum_art">4-2-55 Nakanoshima, Kita Ward, Osaka</string>
+    <string name="addr_science_museum">4-2-1 Nakanoshima, Kita Ward, Osaka</string>
+
+    <string name="addr_rikuro">3-2-12 Namba, Chuo Ward, Osaka</string>
+    <string name="addr_lilo">1-10-28 Nishishinsaibashi, Chuo Ward, Osaka</string>
+    <string name="addr_arabica">1-6-5 Minamihorie, Nishi Ward, Osaka</string>
+
 </resources>

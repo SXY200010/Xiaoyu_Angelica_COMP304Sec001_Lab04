@@ -76,7 +76,8 @@ fun MainScreen(onCategoryClick: (String) -> Unit) {
 
             // Category list — each card has an image + text
             Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                val categories = PlacesRepository.getCategories()
+                val context = LocalContext.current
+                val categories = PlacesRepository.getCategories(context)
                 categories.forEach { category ->
                     CategoryCard(
                         category = category,
