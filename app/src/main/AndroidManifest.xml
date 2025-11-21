@@ -22,20 +22,20 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".AngelicaActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".XiaoyuActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Xiaoyu_Angelica_COMP304Sec001_Lab04">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".XiaoyuActivity"
-            android:exported="true"
-            android:label="Xiaoyu Map" />
-
     </application>
 </manifest>
