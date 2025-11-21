@@ -10,29 +10,41 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -40,6 +52,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.xiaoyu_angelica_comp304sec001_lab04.repository.Place
 import com.example.xiaoyu_angelica_comp304sec001_lab04.repository.PlacesRepository
+import com.example.xiaoyu_angelica_comp304sec001_lab04.ui.theme.OsakaTheme
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -47,6 +60,7 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import androidx.compose.ui.viewinterop.AndroidView
 
 class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
 
@@ -96,9 +110,10 @@ class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
         }
 
         setContent {
-            MaterialTheme {
+            // Use the OsakaTheme even if some theme files are not used now
+            OsakaTheme {
                 if (showPlacesList) {
-                    // Show places list UI (second screen)
+                    // Show enhanced places list UI (second screen)
                     PlacesListScreen(
                         places = PlacesRepository.getPlaces(categoryIdPassed ?: ""),
                         onPlaceClick = { place ->
@@ -109,7 +124,8 @@ class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
                                 putExtra("lng", place.longitude)
                             }
                             startActivity(intent)
-                        }
+                        },
+                        onBack = { finish() } // return to main
                     )
                 } else {
                     // Show original Map screen (kept intact)
@@ -120,26 +136,105 @@ class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
     }
 
     // -------------------------
-    // Places list UI (new)
+    // Enhanced Places list UI
     // -------------------------
     @Composable
-    fun PlacesListScreen(places: List<Place>, onPlaceClick: (Place) -> Unit) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Select a place", style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(8.dp))
+    fun PlacesListScreen(places: List<Place>, onPlaceClick: (Place) -> Unit, onBack: () -> Unit) {
+        val ctx = LocalContext.current
 
-            LazyColumn {
-                items(places) { place ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                            .clickable { onPlaceClick(place) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Background image (same one as Main or different if you prefer)
+            Image(
+                painter = painterResource(id = R.drawable.background_main), // or R.drawable.background_places
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+
+            // subtle overlay for readability
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = androidx.compose.ui.graphics.Color(0x88FFFFFF))
+            )
+
+            // Existing content placed on top
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(18.dp)
+            ) {
+
+                // Top bar: Back + Title centered
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = onBack,
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.size(width = 110.dp, height = 44.dp),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = place.name, style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(text = place.address, style = MaterialTheme.typography.bodyMedium)
+                        Text("Back", style = MaterialTheme.typography.labelLarge)
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        text = "Places",
+                        style = MaterialTheme.typography.displayLarge,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(places) { place ->
+                        Card(
+                            shape = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onPlaceClick(place) }
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .padding(14.dp)
+                            ) {
+
+                                // Resolve image resource by place id, fallback to placeholder
+                                val imageRes = remember(place.id) {
+                                    val resId = ctx.resources.getIdentifier(
+                                        place.id,
+                                        "drawable",
+                                        ctx.packageName
+                                    )
+                                    if (resId == 0) R.drawable.placeholder_place else resId
+                                }
+
+                                Image(
+                                    painter = painterResource(id = imageRes),
+                                    contentDescription = place.name,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(190.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                )
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Text(place.name, style = MaterialTheme.typography.titleMedium)
+                                Spacer(modifier = Modifier.height(6.dp))
+                                Text(place.address, style = MaterialTheme.typography.bodyMedium)
+                            }
                         }
                     }
                 }
@@ -155,9 +250,7 @@ class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
         val context = LocalContext.current
         val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-        val mapView = remember {
-            MapView(context).apply { onCreate(null) }
-        }
+        val mapView = remember { MapView(context).apply { onCreate(null) } }
 
         DisposableEffect(lifecycle, mapView) {
             val observer = object : DefaultLifecycleObserver {
@@ -171,9 +264,11 @@ class XiaoyuActivity : ComponentActivity(), OnMapReadyCallback {
             onDispose { lifecycle.removeObserver(observer) }
         }
 
-        AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize()) {
-            it.getMapAsync(this@XiaoyuActivity)
-        }
+        AndroidView(
+            factory = { mapView },
+            modifier = Modifier.fillMaxSize(),
+            update = { mv -> mv.getMapAsync(this@XiaoyuActivity) }
+        )
     }
 
     // Original OnMapReady (unchanged logic except uses intent-provided lat/lng/name if available)
